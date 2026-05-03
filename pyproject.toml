@@ -1,0 +1,111 @@
+[project]
+name = "foyergate"
+version = "0.1.0.dev0"
+description = "An OSS supply chain gateway: vet open-source packages before they enter your local repository."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+authors = [
+    { name = "Denis Pavlov", email = "denimoll@users.noreply.github.com" },
+]
+keywords = ["security", "supply-chain", "osa", "sca", "sbom", "nexus", "npm"]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "httpx>=0.27",
+    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg>=0.30",
+    "alembic>=1.14",
+    "redis>=5.2",
+    "arq>=0.26",
+    "aioboto3>=13.2",
+    "structlog>=24.4",
+    "packageurl-python>=0.16",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "testcontainers>=4.8",
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "types-redis",
+]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocs-mermaid2-plugin>=1.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/denimoll/foyergate"
+Repository = "https://github.com/denimoll/foyergate"
+Issues = "https://github.com/denimoll/foyergate/issues"
+Changelog = "https://github.com/denimoll/foyergate/blob/main/CHANGELOG.md"
+
+[project.scripts]
+foyergate = "foyergate.main:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/foyergate"]
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Tool configuration
+# ──────────────────────────────────────────────────────────────────────────────
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "S",   # flake8-bandit (security)
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+]
+ignore = [
+    "S101",  # use of assert (fine in tests)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "-ra --strict-markers --strict-config --cov=foyergate --cov-report=term-missing"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src/foyergate"]
+branch = true
