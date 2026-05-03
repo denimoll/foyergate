@@ -16,6 +16,7 @@ from fastapi import FastAPI
 
 from foyergate import __version__
 from foyergate.api.health import router as health_router
+from foyergate.api.requests import router as requests_router
 from foyergate.config import get_settings
 
 
@@ -37,10 +38,15 @@ def create_app() -> FastAPI:
 
     # Routers
     app.include_router(health_router, tags=["health"])
+    app.include_router(requests_router)
 
     # Tag the running environment in OpenAPI for visibility
     app.openapi_tags = [
         {"name": "health", "description": "Liveness and readiness probes."},
+        {
+            "name": "requests",
+            "description": "Submit and inspect component vetting requests.",
+        },
     ]
     app.state.settings = settings
 
