@@ -32,14 +32,16 @@ class MyCustomChecker(Checker):
         # ctx.metadata        → parsed manifest (package.json for npm)
         # ctx.purl            → canonical Package URL
         if "suspicious-marker" in ctx.metadata.get("scripts", {}).get("postinstall", ""):
-            findings.append(Finding(
-                checker=self.name,
-                category="malware",
-                severity=Severity.high,
-                rule_id="my-custom/suspicious-postinstall",
-                title="Postinstall script contains suspicious marker",
-                evidence={"script": ctx.metadata["scripts"]["postinstall"]},
-            ))
+            findings.append(
+                Finding(
+                    checker=self.name,
+                    category="malware",
+                    severity=Severity.high,
+                    rule_id="my-custom/suspicious-postinstall",
+                    title="Postinstall script contains suspicious marker",
+                    evidence={"script": ctx.metadata["scripts"]["postinstall"]},
+                )
+            )
         return findings
 ```
 
@@ -67,17 +69,13 @@ from foyergate.core.models import Artifact, Manifest
 class PyPIAdapter(EcosystemAdapter):
     name = "pypi"
 
-    async def fetch(self, name: str, version: str) -> Artifact:
-        ...
+    async def fetch(self, name: str, version: str) -> Artifact: ...
 
-    async def parse_manifest(self, artifact: Artifact) -> Manifest:
-        ...
+    async def parse_manifest(self, artifact: Artifact) -> Manifest: ...
 
-    async def resolve_dependencies(self, manifest: Manifest) -> list[tuple[str, str]]:
-        ...
+    async def resolve_dependencies(self, manifest: Manifest) -> list[tuple[str, str]]: ...
 
-    async def publish_to_internal_repo(self, artifact: Artifact, target: str) -> str:
-        ...
+    async def publish_to_internal_repo(self, artifact: Artifact, target: str) -> str: ...
 
     def build_purl(self, name: str, version: str) -> str:
         return f"pkg:pypi/{name}@{version}"
