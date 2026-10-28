@@ -12,10 +12,10 @@
 #   docker run --rm -p 9876:9876 --env-file .env foyergate:dev
 
 # ── Stage 1: builder ───────────────────────────────────────────────
-FROM python:3.12-slim-bookworm AS builder
+FROM python:3.12-slim-trixie AS builder
 
 # Pin uv from its own image to avoid bootstrapping it via pip.
-COPY --from=ghcr.io/astral-sh/uv:0.5 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13 /uv /usr/local/bin/uv
 
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --no-dev --no-editable
 
 # ── Stage 2: runtime ──────────────────────────────────────────────
-FROM python:3.12-slim-bookworm AS runtime
+FROM python:3.12-slim-trixie AS runtime
 
 ARG APP_UID=10001
 ARG APP_GID=10001
